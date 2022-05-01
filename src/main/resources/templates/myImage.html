@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!--BootStrap美化页面-->
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .img{
+            height: 70px;
+            margin-right: -70px;
+        }
+        #ui{
+            margin-left: 510px;
+        }
+        #gekai{
+            float: right;
+        }
+        #xin{
+            text-decoration: none;
+            font-size: 38px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 colum">
+            <div class="page-header">
+                <h1>
+                    <small>---------图片列表--------</small>
+                </h1> <a id="ui" class="btn btn-primary" th:href="@{/}">再次上传</a>
+            </div>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <table class="table table-hover table-striped"  >
+                <thead>
+                <tr>
+                    <th><img style="width: 50px;" src="http://localhost:8080/upload/排行榜.png"> </th>
+                    <th>图片</th>
+                    <th>描述</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="my,stat:${Kings}">
+                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[[${stat.count}]]</td>
+                    <th><a th:href="@{'http://localhost:8080/upload/'+${my.key}}"> <img  class="img" th:src="@{'http://localhost:8080/upload/'+${my.key}}"> </a> </th>
+                    <td  th:text="${my.value}"></td> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <td><a id="gekai" class="btn btn-primary" th:href="@{'/upload/delete/'+${my.key}}">删除</a></td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

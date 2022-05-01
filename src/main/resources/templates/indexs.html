@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>upload模块快速使用</title>
+    <link rel="stylesheet" th:href="@{/webjars/layui/2.5.7/css/layui.css}">
+    <link rel="stylesheet" th:href="@{/index.css}">
+    <script th:src="@{/webjars/layui/2.5.7/layui.js}"></script>
+</head>
+<body>
+
+<ul class="layui-nav">
+    <li class="layui-nav-item">
+        <a href="">控制台<span class="layui-badge">9</span></a>
+    </li>
+    <li class="layui-nav-item">
+        <a href="">个人中心<span class="layui-badge-dot"></span></a>
+    </li>
+
+    <!--        点击可进入我的图片库         -->
+    <li class="layui-nav-item">
+        <a th:href="@{/uploads/myImages}">
+            <img src="https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201901%2F12%2F20190112063839_kzrim.thumb.700_0.jpeg&refer=http%3A%2F%2Fb-ssl.duitang.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1653813589&t=f575a06daceec602ef4871cbd72c39cd"
+                 class="layui-nav-img">我的图片
+        </a>
+    </li>
+</ul>
+
+
+<header>
+    <span>基于LayUI完成图片的上传和预览功能</span>
+</header>
+
+<article>
+    <div class="layui-container">
+        <div class="layui-row">
+            <!-- 这里添加一个form表单 -->
+            <form class="layui-form" action="">
+
+                <!-- 这里设置一个隐藏域，用来存放我们的图片的地址 -->
+                <input type="hidden" id="imagePath" name="imagePath" value="">
+
+                <!-- 图片描述   -->
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">图片描述</label>
+                    <div class="layui-input-block">
+                        <textarea name="imageDescribe" placeholder="请输入该图片的描述" class="layui-textarea"></textarea>
+                    </div>
+                </div>
+
+                <!-- 上传图片-->
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">上传按钮</label>
+                    <div class="layui-input-block">
+                        <button type="button" class="layui-btn" id="upload-button">
+                            <i class="layui-icon">&#xe67c;</i>上传图片
+                        </button>
+                    </div>
+                </div>
+
+                <!--   图片预览-->
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">图片预览</label>
+                    <div class="layui-input-block">
+                        <img id="image" style="width: 300px;">
+                    </div>
+                </div>
+                <!-- 提交表单  -->
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="upload">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</article>
+</body>
+</html>
+
+<script>
+
+    //如果你要用LayUi提供的form,这部分必须写上
+    layui.use('form', function(){
+        let form = layui.form;
+        let $ = layui.$;
+        //监听表单的提交
+        form.on('submit(upload)', function(data){
+            $.ajax({
+                url: "/uploads/addImages",   //请求路径
+                method: "post",            //请求方式
+                data: data.field,          //请求数据:各个域键值
+                dataType: "JSON",          //上传参数的数据格式
+                success: function (res){   //成功以后获取返回值结果 怎么做
+                    if (res ==1){
+                        layer.msg("上传成功");
+                    }
+                }
+            })
+            return false;
+        });
+    });
+
+    //如果你要用LayUi提供的文件上传功能,这部分必须写上
+    layui.use('upload', function(){
+        let upload = layui.upload;
+        let $ = layui.$;
+        //执行实例
+        let uploadInst = upload.render({
+            elem: '#upload-button'  //绑定元素
+            ,url: '/uploads/images'  //上传接口
+            ,done: function(res){  //执行完后端后的请求后,res代表返回的Json
+                if (res.code == 1){
+                    layer.msg("上传成功");
+                    //获得图片的路径
+                    let src = res.data.src;
+                    //将图片进行回显
+                    $("#image").attr("src",src);
+                    //将图片的地址赋值给 form的隐藏域
+                    $("#imagePath").attr("value",src);
+                }else{
+                    layer.msg("上传失败");
+                }
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+    });
+
+</script>
